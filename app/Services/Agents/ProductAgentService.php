@@ -43,7 +43,11 @@ PROMPT;
             config('claude.sonnet_model')
         );
 
-        $decoded = json_decode($result['content'], true) ?? [];
+        $content = $result['content'];
+        if (preg_match('/```(?:json)?\s*([\s\S]*?)\s*```/s', $content, $matches)) {
+            $content = $matches[1];
+        }
+        $decoded = json_decode(trim($content), true) ?? [];
 
         return array_merge($decoded, [
             '_meta' => [

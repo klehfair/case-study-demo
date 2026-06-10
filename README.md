@@ -3,10 +3,30 @@
 Runnable demo of the BrandWriter.ai multi-agent AI workflow.
 Covers: intent classification, specialist agent routing, 3-tier memory, model routing (Haiku/Sonnet), structured output validation.
 
+## Tech Stack
+
+| Component | Version | Notes |
+|---|---|---|
+| PHP | 8.2 (FPM Alpine) | Runtime inside Docker |
+| Laravel | 11 | API-only, no frontend |
+| MySQL | 8.0 | Long-term storage (sellers, conversations, memory) |
+| Valkey | 8.1 Alpine | BSD-licensed Redis fork — session cache, 30 min TTL |
+| Nginx | 1.25 Alpine | Reverse proxy → PHP-FPM |
+| Composer | 2 | PHP dependency manager |
+| Claude Haiku | claude-haiku-4-5-20251001 | Intent classification, context summarisation |
+| Claude Sonnet | claude-sonnet-4-6 | Product & marketing content generation |
+
 ## Prerequisites
 
-- Docker Desktop (Mac/Windows) or Docker Engine + Compose v2 (Linux)
-- An Anthropic API key — get one at https://console.anthropic.com
+| Requirement | Version | Install |
+|---|---|---|
+| Docker Desktop | 4.x+ (Mac/Windows) | https://www.docker.com/products/docker-desktop |
+| Docker Engine + Compose v2 | 24.x+ (Linux) | https://docs.docker.com/engine/install |
+| Anthropic API key | — | https://console.anthropic.com |
+
+> **No local PHP, MySQL, or Valkey installation required.** Everything runs inside Docker.
+
+Docker Desktop resource recommendations: 4 CPUs, 4 GB RAM, 2 GB swap.
 
 ## Quick start
 
@@ -19,6 +39,12 @@ docker compose up --build
 ```
 
 Wait ~60 seconds for MySQL to initialise and migrations to run, then hit the API.
+
+On first boot the `app` container automatically runs:
+```
+php artisan migrate --force --seed
+php artisan config:cache
+```
 
 ## API examples
 
